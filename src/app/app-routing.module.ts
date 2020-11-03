@@ -26,7 +26,7 @@ const routes: Routes = [
     loadChildren: './control-and-view/cleaning-details/cleaning-details.module#CleaningDetailsModule'
   },
   {
-    path: 'supportYou',
+    path: 'support',
     loadChildren: './control-and-view/support-page/support-page.module#SupportPageModule'
   },
 ];
