@@ -1343,4 +1343,15 @@ export class PeopleServiceService {
         '&ActionKey=' + ActionKey + '&OrganizationID=' + OrganizationID);
 
   }
+
+  cancelPTObyEmployee(ptorequestID$, empKey, orgID, curDate) {
+    const url = ConectionSettings.Url + "/cancelPTORequest";
+    const obj = {
+      todayDate: curDate,
+      ptorequestID: ptorequestID$,
+      EmpKey: empKey,
+      OrgID: orgID
+    };
+    return this.http.post(url, obj);
+  }
 }
