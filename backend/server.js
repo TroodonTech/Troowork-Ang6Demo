@@ -21721,6 +21721,36 @@ app.post(securedpath + '/cancelPTORequest', supportCrossOriginScript, function (
         connection.release();
     });
 });
+
+app.get(securedpath + '/employeesrowFiltering_mob', function (req, res) {
+    res.header("Access-Control-Allow-Origin", "*");
+
+    var groupID = url.parse(req.url, true).query['groupID'];
+    var searchtext = url.parse(req.url, true).query['searchtext'];
+    var range = url.parse(req.url, true).query['range'];
+    var todaydate = url.parse(req.url, true).query['todaydate'];
+    var OrganizationID = url.parse(req.url, true).query['OrganizationID'];
+
+    pool.getConnection(function (err, connection) {
+        if (err) {
+
+            console.log("Failed! Connection with Database spicnspan via connection pool failed");
+        }
+        else {
+            111
+            console.log("Success! Connection with Database spicnspan via connection pool succeeded");
+            connection.query('set@groupID=?;set @searchtext=?;set@range=?;set @todaydate=?;set @OrganizationID=?; call usp_getEmployeesForSchedulerWithrowFiltering_mob(@groupID,@searchtext,@range,@todaydate,@OrganizationID)', [groupID, searchtext, range, todaydate, OrganizationID], function (err, rows) {//IMPORTANT : (err,rows) this order matters.
+                if (err) {
+                    console.log("Problem with MySQL" + err);
+                }
+                else {
+                    res.end(JSON.stringify(rows[5]));
+                }
+            });
+        }
+        connection.release();
+    });
+});
 // @Rodney ends...
 
 //handle generic exceptions
