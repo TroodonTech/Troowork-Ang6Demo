@@ -17161,23 +17161,29 @@ app.post(securedpath + '/setEditedTradeRequest', supportCrossOriginScript, funct
     });
 });
 
-app.get(securedpath + '/getTradeRequestdetailsforManager', function (req, res) {
-    res.header("Access-Control-Allow-Origin", "*");
-    var empKey = url.parse(req.url, true).query['empKey'];
-    var OrganizationID = url.parse(req.url, true).query['orgID'];
+app.post(securedpath + '/getTradeRequestdetailsforManager', supportCrossOriginScript, function (req, res) {
+
+    var newWOObj = req.body;
+    var OrganizationID = newWOObj.OrganizationID;
+    var employeekey = newWOObj.employeekey;
+    var fromdate = newWOObj.fromdate;
+    var todate = newWOObj.todate;
+    var TradeStatuses = newWOObj.TradeStatuses;
+
     pool.getConnection(function (err, connection) {
         if (err) {
+
             console.log("Failed! Connection with Database spicnspan via connection pool failed");
         }
         else {
             console.log("Success! Connection with Database spicnspan via connection pool succeeded");
-            connection.query("set @empKey=?;set @OrganizationID=?;call usp_getTradeRequestdetailsforManager(@empKey,@OrganizationID)", [empKey, OrganizationID], function (err, rows) {
+            connection.query('set @OrganizationID=?;set @employeekey=?;set @fromdate=?;set @todate=?;set @TradeStatuses=?;call usp_getTradeRequestdetailsforManager(@OrganizationID,@employeekey,@fromdate,@todate,@TradeStatuses)', [OrganizationID, employeekey, fromdate, todate, TradeStatuses], function (err, rows) {
                 if (err) {
                     console.log("Problem with MySQL" + err);
                 }
                 else {
-                    // console.log(JSON.stringify(rows[2]));
-                    res.end(JSON.stringify(rows[2]));
+
+                    res.end(JSON.stringify(rows[5]));
                 }
             });
         }
@@ -21833,6 +21839,35 @@ app.post(securedpath + '/tradeCancelApprove', supportCrossOriginScript, function
         connection.release();
     });
 });
+
+
+app.get(securedpath + '/getTradeStatus', function (req, res) {
+    res.header("Access-Control-Allow-Origin", "*");
+
+    var OrganizationID = url.parse(req.url, true).query['orgID'];
+
+    pool.getConnection(function (err, connection) {
+        if (err) {
+
+            console.log("Failed! Connection with Database spicnspan via connection pool failed");
+        }
+        else {
+            111
+            console.log("Success! Connection with Database spicnspan via connection pool succeeded");
+            connection.query('set @OrganizationID=?; call usp_getTradeStatus(@OrganizationID)', [OrganizationID], function (err, rows) {//IMPORTANT : (err,rows) this order matters.
+                if (err) {
+                    console.log("Problem with MySQL" + err);
+                }
+                else {
+                    res.end(JSON.stringify(rows[1]));
+                }
+            });
+        }
+        connection.release();
+    });
+});
+
+
 
 // @Rodney ends...
 
